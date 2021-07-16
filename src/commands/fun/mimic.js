@@ -15,6 +15,9 @@ class Mimic extends Command {
   async run(msg, [user, ...message]) {
     user = await this.verifyUser(msg, user);
     if (!message) {
+      return replyError(msg, `Please enter some message`, 5000)
+    }
+    if (!message) {
       return replyError(msg, "Cannot send empty message", 5000);
     }
     if (msg.deletable) await msg.delete();
