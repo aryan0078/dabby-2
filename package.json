@@ -19,6 +19,7 @@
   },
   "homepage": "",
   "dependencies": {
+    "canvas": "^2.8.0",
     "cheerio": "^1.0.0-rc.3",
     "dblapi.js": "^2.4.0",
     "discord-buttons": "^3.2.1",
@@ -27,6 +28,8 @@
     "express": "^4.17.1",
     "fast-levenshtein": "^2.0.6",
     "img-api": "^1.0.4",
+    "join-images": "^0.2.6",
+    "merge-images": "^2.0.0",
     "module-alias": "^2.2.2",
     "mongodb": "^3.6.0",
     "node-base64-image": "^2.0.3",
