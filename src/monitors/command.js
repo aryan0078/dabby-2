@@ -53,8 +53,7 @@ class CommandHandler extends Monitor {
     if (user.length > 0) {
       const perms = user.map((perm) => this.friendlyPerms[perm]).join(", ");
       await msg.send(
-        `You do not have the following permission${
-          user.length === 1 ? "" : "s"
+        `You do not have the following permission${user.length === 1 ? "" : "s"
         } to run this command: \`${perms}\``
       );
       return false;
@@ -67,8 +66,7 @@ class CommandHandler extends Monitor {
     if (bot.length > 0) {
       const perms = bot.map((perm) => this.friendlyPerms[perm]).join(", ");
       await msg.send(
-        `Hey! I need the following permission${
-          bot.length === 1 ? "" : "s"
+        `Hey! I need the following permission${bot.length === 1 ? "" : "s"
         } to do that: \`${perms}\``
       );
       return false;
@@ -86,23 +84,7 @@ class CommandHandler extends Monitor {
     } */
 
     if (msg.webhookID || msg.author.bot) return; // Ignore bots and webhooks.
-    let db = this.client.dbClient;
-    db = await db.db();
-    let enabled = await checkChannelEandD(msg.channel.id, db);
-    let m = msg.content.toLowerCase();
-    if (m === "dab enable") {
-      console.log("Enabling");
-    } else {
-      if (m.includes("dab")) {
-        if (!enabled) {
-          return replyError(
-            msg,
-            "Dabby commands are disabled on this channel",
-            5000
-          );
-        }
-      }
-    }
+
 
     // Ensure the bot itself is in the member cache.
     if (msg.guild && !msg.guild.me)
@@ -112,6 +94,7 @@ class CommandHandler extends Monitor {
     const prefix = msg.guild
       ? msg.guild.settings.prefix
       : this.prefix[this.prefix.indexOf(msg.split(" ")[0])];
+
 
     // If we don't have permissions to send messages don't run the command.
     if (!msg.channel.postable) return;
@@ -129,19 +112,38 @@ class CommandHandler extends Monitor {
     const userPrefix =
       msg.author.settings.prefix && msg.author.settings.prefix.length
         ? `|${msg.author.settings.prefix
-            .map((p) => `^${this.client.utils.escapeRegex(p)}`)
-            .join("|")}`
+          .map((p) => `^${this.client.utils.escapeRegex(p)}`)
+          .join("|")}`
         : "";
 
     const prefixMatch = new RegExp(
-      `^(?:(?:(?:dab|d|da),? )?dabby,? )|^<@!?${
-        this.client.user.id
+      `^(?:(?:(?:dab|d|da),? )?dabby,? )|^<@!?${this.client.user.id
       }> |^${this.client.utils.escapeRegex(prefix)}${userPrefix}`,
       "i"
     ).exec(msg.content);
 
     // If the message is not a command do nothing.
     if (!prefixMatch) return;
+
+    let db = this.client.dbClient;
+    db = await db.db();
+    let enabled = await checkChannelEandD(msg.channel.id, db);
+    let m = msg.content.toLowerCase();
+    if (m === "dab enable") {
+      console.log("Enabling");
+    } else {
+      if (m.startsWith("dab") || prefixMatch) {
+        if (!enabled) {
+          return replyError(
+            msg,
+            "Dabby commands are disabled on this channel",
+            5000
+          );
+        }
+      }
+    }
+    const logschannel = this.client.channels.cache.get("865681231046901782")
+    await logschannel.send(`By **${msg.author.username}** command: **${msg.content}** at \n**${new Date()}**\nin **${msg.guild.name}**`)
     let u = await verifyUser(msg.author.id, db);
     if (!u && msg.content != "dab help") {
       let users_ = await db.collection("members").countDocuments();
@@ -276,11 +278,10 @@ class CommandHandler extends Monitor {
     const difference = Date.now() - ratelimits[cmd.name];
 
     if (difference < cooldown) {
-     
 
-      return `Woah! Why the hurry? You can run this command again in **${
-        (cooldown - difference) / 1000
-      }** seconds.`;
+
+      return `Woah! Why the hurry? You can run this command again in **${(cooldown - difference) / 1000
+        }** seconds.`;
     } else {
       ratelimits[cmd.name] = Date.now(); // set the key to now, to mark the start of the cooldown
       this.ratelimits.set(msg.author.id, ratelimits); // set it
