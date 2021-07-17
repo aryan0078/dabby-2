@@ -13,14 +13,14 @@ require("dotenv").config();
 const moduleAlias = require("module-alias");
 const { paydab, getdabbal } = require("./src/structures/database.js");
 const express = require("express");
-const app = express();
-const port = 3000;
+/* onst app = express();
+const port = 8000;
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
-);
+); */
 moduleAlias.addAliases({
   "@utils": __dirname + "/src/utils",
   "@structures": __dirname + "/src/structures",
@@ -35,15 +35,27 @@ require("./src/extensions/DMChannel.js");
 require("./src/extensions/Message.js");
 require("./src/extensions/Guild.js");
 require("./src/extensions/User.js");
+var cluster = require('cluster');
+if (cluster.isMaster) {
+  cluster.fork();
 
-// Import the Client.
-const MiyakoClient = require("./src/structures/MiyakoClient.js");
-const { toFancyNum } = require("./src/utils/constants.js");
+  cluster.on('exit', function (worker, code, signal) {
+    cluster.fork();
+  });
+}
 
-// Login. (And start in development mode if --dev is passed)
-let d = new MiyakoClient(process.argv.includes("--dev"));
-d.login();
-try {
+if (cluster.isWorker) {
+  // put your code here
+
+  // Import the Client.
+  const MiyakoClient = require("./src/structures/MiyakoClient.js");
+  const { toFancyNum } = require("./src/utils/constants.js");
+
+  // Login. (And start in development mode if --dev is passed)
+  let d = new MiyakoClient(process.argv.includes("--dev"));
+  d.login();
+
+
   require("discord-buttons")(d);
   d.on("clickButton", async (button) => {
     let l = d.dbClient;
@@ -82,25 +94,24 @@ try {
     if (args.startsWith("reject")) {
       let u = args.split(":");
 
-      button.message.send(
-        `Payment rejected of **${toFancyNum(
-          parseInt(u[2])
-        )}** <:dabs:851218687255773194> dabs to **<@${u[3]}>** `
-      );
-      button.message.delete();
-      try {
-        let user = await d.users.fetch(u[3]);
-        user.send(
-          `**${user.username} |** Payment Rejected from ${button.clicker.user.username
-          } of **${toFancyNum(parseInt(u[2]))}** <:dabs:851218687255773194> dabs`
+        button.message.send(
+          `Payment rejected of **${toFancyNum(
+            parseInt(u[2])
+          )}** <:dabs:851218687255773194> dabs to **<@${u[3]}>** `
         );
-      } catch (e) {
-        console.log("");
+        button.message.delete();
+        try {
+          let user = await d.users.fetch(u[3]);
+          user.send(
+            `**${user.username} |** Payment Rejected from ${button.clicker.user.username
+            } of **${toFancyNum(parseInt(u[2]))}** <:dabs:851218687255773194> dabs`
+          );
+        } catch (e) {
+          console.log("");
+        }
+        await button.defer();
       }
-      await button.defer();
-    }
    
-  });
-} catch (err) {
-  console.log('Error')
+    });
+
 }
