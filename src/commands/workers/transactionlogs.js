@@ -21,14 +21,13 @@ class TransactionLogs extends Command {
             let db = this.client.dbClient;
             db = await db.db();
             let logs = db.collection('transations')
-            let l = await logs.find({ by: `${user.id}` }).sort({ at: 1 }).toArray();
+            let l = await logs.find({ by: `${user.id}` }).sort({ at: 1 }).limit(15).toArray();
             let str = `Transactions logs of ${user.username}\n`
-
             l.forEach(async (lo) => {
                 let u = await this.client.users.fetch(lo.to)
                 str += `**${user.username}** has transferred **${toFancyNum(lo.amount)}** <:dabs:851218687255773194> dabs to **${u.username}** at ${new Date(lo.at)}\n`
             });
-            msg.send('Check DM for logs').then(m => { m.react('👍'); author.send(str) })
+            msg.send('Check DM for logs').then(m => { setTimeout(() => { m.react('👍'); author.send(str) }, 5000) })
             // return author.send(str)
 
         } else {
