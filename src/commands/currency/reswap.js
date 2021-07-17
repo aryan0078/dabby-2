@@ -58,7 +58,8 @@ class Reswap extends Command {
 
     let serverVal = await serverValue(msg.guild, msg);
     let estimated = Math.round((amt * serverVal) / 100);
-    let currencyExsis = await getBalanceExists(msg.author.id, msg.guild.id,  db);
+    let currencyExsis = await getBalanceExists(msg.author.id, msg.guild.id, db);
+
     if (currencyExsis) {
       user.findOneAndUpdate(
         { id: msg.author.id, "wallet.id": msg.guild.id },

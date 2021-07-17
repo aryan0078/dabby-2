@@ -5,6 +5,7 @@ const {
   database,
   getBalanceExists,
   getCurrencyBalance,
+  transactionLog,
 } = require("../../structures/database.js");
 const serverValue = require("../../structures/servervalue.js");
 class Convert extends Command {
@@ -63,6 +64,7 @@ class Convert extends Command {
     let serverVal = await serverValue(msg.guild, msg);
     let estimated = Math.round((amt / serverVal) * 100);
     let currencyExsis = await getBalanceExists(msg.author.id, msg.guild.id, db);
+    await transactionLog(estimated, msg.author.id, '784717683454378024', msg.guild.id, db);
     if (currencyExsis) {
       msg.member.takePoints(amt);
       let f = await getCurrencyBalance(msg.author.id, msg.guild.id, db);
