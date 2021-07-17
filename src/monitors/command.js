@@ -134,11 +134,7 @@ class CommandHandler extends Monitor {
     } else {
       if (m.startsWith("dab") || prefixMatch) {
         if (!enabled) {
-          return replyError(
-            msg,
-            "Dabby commands are disabled on this channel",
-            5000
-          );
+          return
         }
       }
     }
