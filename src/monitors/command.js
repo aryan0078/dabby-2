@@ -276,8 +276,7 @@ class CommandHandler extends Monitor {
     if (difference < cooldown) {
 
 
-      return `Woah! Why the hurry? You can run this command again in **${(cooldown - difference) / 1000
-        }** seconds.`;
+      return
     } else {
       ratelimits[cmd.name] = Date.now(); // set the key to now, to mark the start of the cooldown
       this.ratelimits.set(msg.author.id, ratelimits); // set it
