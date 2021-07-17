@@ -140,7 +140,7 @@ class CommandHandler extends Monitor {
     }
     /*  const logschannel = this.client.channels.cache.get("865681231046901782")
      await logschannel.send(`By **${msg.author.username}** command: **${msg.content}** at \n**${new Date()}**\nin **${msg.guild.name}**`) */
-    let u = await verifyUser(msg.author.id, db);
+  /*   let u = await verifyUser(msg.author.id, db);
     if (!u && msg.content != "dab help") {
       let users_ = await db.collection("members").countDocuments();
       const guild = this.client.guilds.cache.get("843887160696635403"); //Dabby support server ID
@@ -167,7 +167,7 @@ class CommandHandler extends Monitor {
       });
       msg.channel.send("Signup", embed).then((m) => m.react("👍"));
       return;
-    }
+    } */
 
     // Ignore blacklisted users/guilds. DM them a reminder if possible.
     if (msg.guild && msg.guild.blacklisted)
