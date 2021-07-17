@@ -21,7 +21,7 @@ class TransactionLogs extends Command {
             let db = this.client.dbClient;
             db = await db.db();
             let logs = db.collection('transations')
-            let l = await logs.find({ by: `${user.id}` }).sort({ at: 1 }).limit(15).toArray();
+            let l = await logs.find({ by: `${user.id}` }).sort({ at: -1 }).limit(15).toArray();
             let str = `Transactions logs of ${user.username}\n`
             l.forEach(async (lo) => {
                 let u = await this.client.users.fetch(lo.to)
