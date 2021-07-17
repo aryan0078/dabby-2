@@ -52,10 +52,10 @@ class CommandHandler extends Monitor {
 
     if (user.length > 0) {
       const perms = user.map((perm) => this.friendlyPerms[perm]).join(", ");
-      await msg.send(
+      /* await msg.send(
         `You do not have the following permission${user.length === 1 ? "" : "s"
         } to run this command: \`${perms}\``
-      );
+      ); */
       return false;
     }
 
@@ -65,10 +65,10 @@ class CommandHandler extends Monitor {
       .missing(cmd.botPermissions);
     if (bot.length > 0) {
       const perms = bot.map((perm) => this.friendlyPerms[perm]).join(", ");
-      await msg.send(
+      /* await msg.send(
         `Hey! I need the following permission${bot.length === 1 ? "" : "s"
         } to do that: \`${perms}\``
-      );
+      ); */
       return false;
     }
 
