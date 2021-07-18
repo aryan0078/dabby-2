@@ -345,6 +345,13 @@ async function verifyUser(user, d) {
     return true;
   }
 }
+async function addCrate(id, ticketid, d) {
+  let db = d;
+  let crates = db.collection('crates');
+  let cid = uid(5);
+  await crates.insertOne({ id: cid, of: id, opened: false, reciveat: new Date(), contains: ticketid });
+  return true
+}
 async function getdabbal(id, d) {
   let db = d;
   let c = db.collection("members");
@@ -374,5 +381,6 @@ module.exports = {
   transactionLog,
   topleaderboard,
   randomUser,
-  givedabs
+  givedabs,
+  addCrate
 };

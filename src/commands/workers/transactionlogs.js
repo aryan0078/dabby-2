@@ -13,23 +13,41 @@ class TransactionLogs extends Command {
         });
     }
 
-    async run(msg, [user]) {
+    async run(msg, [user, date]) {
         if (msg.channel.id == "866214211579019294") {
             user = await this.verifyUser(msg, user);
             let author = await this.verifyMember(msg, msg.author)
             let db = this.client.dbClient;
             db = await db.db();
             let logs = db.collection('transations')
-            let l = await logs.find({ by: `${user.id}` }).sort({ at: -1 }).limit(15).toArray();
-            let str = `Transactions logs of ${user.username}\n`
-            l.forEach(async (lo, index) => {
+            let l
+
+            if (date) {
+                if (!parseInt(date) || date > 30 || date < 0) {
+                    return replyError(msg, 'Please input proper format of date', 5000)
+                }
+                let temd = new Date()
+                temd.setDate(date)
+
+                l = await logs.find({ by: `${user.id}`, at: temd }).sort({ at: -1 }).limit(15).toArray();
+            } else {
+                l = await logs.find({ by: `${user.id}` }).sort({ at: -1 }).toArray();
+            }
+            console.log(l)
+
+            let str = `Transactions logs of ${user.username} if your logs are too much it wont show in this case input specific date\n`
+            try {
+                l.forEach(async (lo, index) => {
 
                 let u = await this.client.users.fetch(lo.to)
-                str += `**${user.username}** **${toFancyNum(lo.amount)}** to **${u.username}** at ${new Date(lo.at).toDateString()}\n`
-                if (index == l.length - 1) {
+                    str += `**${user.username}** | **${toFancyNum(lo.amount)}** <:dabs:851218687255773194> to **${u.username}** at ${new Date(lo.at).toDateString()}\n`
+                    if (index == l.length - 1) {
                     return msg.send('Logs').then(async (m) => { await msg.channel.send(str); m.react('👍') })
                 }
             });
+            } catch (err) {
+                return msg.send('You logs are too much please input specific date we cant show you your all logs ')
+            }
 
         } else {
             if (await this.workercheck(msg) || await this.globalpartnercheck(msg) || await this.guidercheck(msg)) {

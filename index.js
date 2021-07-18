@@ -8,10 +8,10 @@
 
 // Load .env
 require("dotenv").config();
-
+const random = require("random-number-csprng");
 // Setup Module Alias.
 const moduleAlias = require("module-alias");
-const { paydab, getdabbal } = require("./src/structures/database.js");
+const { paydab, getdabbal, givedabs, addCrate } = require("./src/structures/database.js");
 const express = require("express");
 /* onst app = express();
 const port = 8000;
@@ -36,6 +36,7 @@ require("./src/extensions/Message.js");
 require("./src/extensions/Guild.js");
 require("./src/extensions/User.js");
 var cluster = require('cluster');
+const { MessageEmbed } = require("discord.js");
 if (cluster.isMaster) {
   cluster.fork();
 
@@ -49,7 +50,7 @@ if (cluster.isWorker) {
 
   // Import the Client.
   const MiyakoClient = require("./src/structures/MiyakoClient.js");
-  const { toFancyNum } = require("./src/utils/constants.js");
+  const { toFancyNum, replyError } = require("./src/utils/constants.js");
 
   // Login. (And start in development mode if --dev is passed)
   let d = new MiyakoClient(process.argv.includes("--dev"));
@@ -61,6 +62,26 @@ if (cluster.isWorker) {
     let l = d.dbClient;
     l = l.db();
     let args = button.id;
+
+    if (args == "crate") {
+      let u = args.split(":");
+
+      let cost = 500000
+
+      const channel = await d.channels.cache.get("866266040400740372");
+      await button.clicker.fetch()
+      let balance = await getdabbal(button.clicker.user.id, l);
+      if (balance.points < cost) {
+        return replyError(channel, `<@${button.clicker.user.id}> you dont have enough <:dabs:851218687255773194> dabs to open crate\nRequired cost is **${toFancyNum(cost)}** <:dabs:851218687255773194> dabs`, 10000)
+      } else {
+        await givedabs(button.clicker.user.id, -cost, l);
+        let ticketid = await random(10, 50);
+        await addCrate(button.clicker.user.id, ticketid, l)
+        /* let embed = new MessageEmbed().setImage('https://cdn.discordapp.com/attachments/848414662587973653/865751936060882954/3.png') */
+        return replyError(channel, `<@${button.clicker.user.id}> you have recived **1** <a:crate:866403905760133158> for **${toFancyNum(cost)}** <:dabs:851218687255773194> dabs`, 10000)
+
+      }
+    }
     if (args.startsWith("accept")) {
       let u = args.split(":");
       let balance = await getdabbal(button.clicker.user.id, l);
