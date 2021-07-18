@@ -31,7 +31,7 @@ class BanApplication extends Command {
 
 
 
-        return await channel.send(`**Click to open buy crate for **${toFancyNum(500000)}** <:dabs:851218687255773194> dabs`, row);
+        return await channel.send(`Click to open buy crate for **${toFancyNum(500000)}** <:dabs:851218687255773194> dabs`, row);
 
     }
 }
