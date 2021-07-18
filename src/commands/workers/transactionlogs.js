@@ -25,7 +25,7 @@ class TransactionLogs extends Command {
             l.forEach(async (lo, index) => {
 
                 let u = await this.client.users.fetch(lo.to)
-                str += `**${user.username}** has transferred **${toFancyNum(lo.amount)}** <:dabs:851218687255773194> dabs to **${u.username}** at ${new Date(lo.at).toDateString()}\n`
+                str += `**${user.username}** **${toFancyNum(lo.amount)}** to **${u.username}** at ${new Date(lo.at).toDateString()}\n`
                 if (index == l.length - 1) {
                     return msg.send('Logs').then(async (m) => { await msg.channel.send(str); m.react('👍') })
                 }
