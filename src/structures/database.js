@@ -345,6 +345,7 @@ async function verifyUser(user, d) {
     return true;
   }
 }
+
 async function addCrate(id, ticketid, d) {
   let db = d;
   let crates = db.collection('crates');

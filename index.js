@@ -70,12 +70,23 @@ if (cluster.isWorker) {
 
       const channel = await d.channels.cache.get("866266040400740372");
       await button.clicker.fetch()
+      let user = await getdabbal(button.clicker.user.id, l)
       let balance = await getdabbal(button.clicker.user.id, l);
+      if (!user.gender) {
+        return replyError(channel, `<@${button.clicker.user.id}> please set your gender \nby \`dab sg\``, 8000)
+      }
       if (balance.points < cost) {
         return replyError(channel, `<@${button.clicker.user.id}> you dont have enough <:dabs:851218687255773194> dabs to open crate\nRequired cost is **${toFancyNum(cost)}** <:dabs:851218687255773194> dabs`, 10000)
       } else {
         await givedabs(button.clicker.user.id, -cost, l);
-        let ticketid = await random(10, 50);
+        let randometicket
+
+        if (user.gender == 'male') {
+          randometicket = Math.floor(Math.random() * 50 / 2) * 2;
+        } else if (user.gender == "female") {
+          randometicket = Math.floor(Math.random() * 50 / 2) * 2;
+          randometicket += 1
+        }
         await addCrate(button.clicker.user.id, ticketid, l);
         /* let embed = new MessageEmbed().setImage('https://cdn.discordapp.com/attachments/848414662587973653/865751936060882954/3.png') */
         return replyError(channel, `<@${button.clicker.user.id}> you have recived **1** <a:crate:866403905760133158> for **${toFancyNum(cost)}** <:dabs:851218687255773194> dabs`, 10000)
