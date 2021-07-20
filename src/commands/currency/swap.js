@@ -110,10 +110,12 @@ class Convert extends Command {
           },
         }
       );
-      m.edit(
-        `Succefully converted ${amt} dabs <:dabs:851218687255773194> to ${
-          currency.currencyEmoji
-        } you will get ${toFancyNum(estimated)} ${currency.currencyEmoji} ${
+    m.edit(
+        `${await this.badge(msg)} **${
+          msg.author.username
+        }** ${await this.beta(msg) ? this.betaemoji : ''} Successfully swapped <:dabs:851218687255773194> **${toFancyNum(
+          amt
+        )}** dabs to ${currency.currencyEmoji} **${toFancyNum(estimated)}** ${
           currency.currencyName
         }`
       );
@@ -138,9 +140,11 @@ class Convert extends Command {
         }
       );
       m.edit(
-        `Succefully converted ${amt} dabs <:dabs:851218687255773194> to ${
-          currency.currencyEmoji
-        } you will get ${toFancyNum(estimated)} ${currency.currencyEmoji} ${
+        `${await this.badge(msg)} **${
+          msg.author.username
+        }** ${await this.beta(msg) ? this.betaemoji : ''} Successfully swapped <:dabs:851218687255773194> **${toFancyNum(
+          amt
+        )}** dabs to ${currency.currencyEmoji} **${toFancyNum(estimated)}** ${
           currency.currencyName
         }`
       );

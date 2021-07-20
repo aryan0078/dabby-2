@@ -1,6 +1,7 @@
 const { Permissions } = require("discord.js");
 const Base = require("./Base.js");
 const path = require("path");
+const { replyError } = require("../utils/constants.js");
 
 class Command extends Base {
   constructor(client, store, file, options = {}) {
@@ -53,7 +54,9 @@ class Command extends Base {
 
       // If the value is a string reply it to the user.
       if (typeof check === "string") return msg.send(check);
-
+  /*     if (await this.checkDisabled(msg, msg.content)) {
+        return replyError(msg,'This command is disable',6000)
+} */
       // Run the command.
       const results = await this.run(msg, args);
  
@@ -150,6 +153,24 @@ class Command extends Base {
     }
 
 
+  }
+  async checkDisabled(msg, command) {
+     let db = this.client.dbClient;
+    db = await db.db();
+    let channel = await db.collection('channels')
+    let chl = channel.findOne({ id: msg.channel.id });
+    if (!chl) {
+      await channel.insertOne({ id: msg.channel.id, disabledCommands: ['mimic'] })
+      return false
+    } else {
+      if (!chl.disabledCommands) {
+        return false
+      } else {
+        if (chl.disabledCommands.includes(command)) {
+          return true
+        }
+      }
+    }
   }
   async verifyChannel(msg, channel, defaultToCurrent = false) {
     if (!channel && defaultToCurrent) return msg.channel;

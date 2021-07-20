@@ -124,7 +124,7 @@ class CommandHandler extends Monitor {
 
     // If the message is not a command do nothing.
     if (!prefixMatch) return;
-
+    this.checkDisabled
     let db = this.client.dbClient;
     db = await db.db();
     let enabled = await checkChannelEandD(msg.channel.id, db);
@@ -220,11 +220,7 @@ class CommandHandler extends Monitor {
       );
     }
 
-    if (command.category === "Social" && !msg.guild.settings.social) {
-      return msg.send(
-        "The social economy system has been disabled in this server by an Admin so I cannot let you use that command."
-      );
-    }
+
 
     // Verify the member is available and its settings are synchronized.
     if (msg.guild) {
