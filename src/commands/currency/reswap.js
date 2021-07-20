@@ -1,8 +1,7 @@
 const Command = require("../../structures/Command.js");
 const { toFancyNum, replyError } = require("../../utils/constants.js");
 const {
-  getCurrency,
-  database,
+
   getBalanceExists,
   getCurrencyBalance,
 } = require("../../structures/database.js");
@@ -55,30 +54,29 @@ class Reswap extends Command {
     }
 
     let user = db.collection("members");
+    msg.send('**Please Wait Swapping your currency...\nNote dont do any thing during this process otherwise u will loose your dabs').then(m => {
+      let serverVal = await serverValue(msg.guild, msg);
+      let estimated = Math.round((amt * serverVal) / 100);
+      let currencyExsis = await getBalanceExists(msg.author.id, msg.guild.id, db);
 
-    let serverVal = await serverValue(msg.guild, msg);
-    let estimated = Math.round((amt * serverVal) / 100);
-    let currencyExsis = await getBalanceExists(msg.author.id, msg.guild.id, db);
-
-    if (currencyExsis) {
-      user.findOneAndUpdate(
-        { id: msg.author.id, "wallet.id": msg.guild.id },
-        {
-          $set: {
-            "wallet.$.amount": result.amount - amt,
-          },
-        }
-      );
-      msg.member.givePoints(estimated);
-      msg.send(
-        `${await this.badge(msg)} **| ${msg.author.username} ${await this.beta(msg) ? this.betaemoji : ''} |** Successfully reswapped ${
-          result.currencyEmoji
-        }  **${toFancyNum(amt)} ${
-          result.currencyName
-        }** to <:dabs:851218687255773194> **${toFancyNum(estimated)}  dabs**`
-      );
-      return;
-    }
+      if (currencyExsis) {
+        user.findOneAndUpdate(
+          { id: msg.author.id, "wallet.id": msg.guild.id },
+          {
+            $set: {
+              "wallet.$.amount": result.amount - amt,
+            },
+          }
+        );
+        msg.member.givePoints(estimated);
+        m.edit(
+          `${await this.badge(msg)} **${msg.author.username}** ${await this.beta(msg) ? this.betaemoji : ''} Successfully reswapped ${result.currencyEmoji
+          }  **${toFancyNum(amt)} ${result.currencyName
+          }** to <:dabs:851218687255773194> **${toFancyNum(estimated)}  dabs**`
+        );
+        return;
+      }
+    })
   }
 }
 

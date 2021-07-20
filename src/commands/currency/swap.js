@@ -60,6 +60,8 @@ class Convert extends Command {
     }
 
     let user = db.collection("members");
+    msg.send('**Please Wait Swapping your currency...\nNote dont do any thing during this process otherwise u will loose your dabs').then(m => {
+  
 
     let serverVal = await serverValue(msg.guild, msg);
     let estimated = Math.round((amt / serverVal) * 100);
@@ -80,10 +82,10 @@ class Convert extends Command {
         }
       );
 
-      msg.send(
-        `${await this.badge(msg)} **| ${
+     m.edit(
+        `${await this.badge(msg)} **${
           msg.author.username
-        } ${await this.beta(msg) ? this.betaemoji : ''} |** Successfully swapped <:dabs:851218687255773194> **${toFancyNum(
+        }** ${await this.beta(msg) ? this.betaemoji : ''} Successfully swapped <:dabs:851218687255773194> **${toFancyNum(
           amt
         )}** dabs to ${currency.currencyEmoji} **${toFancyNum(estimated)}** ${
           currency.currencyName
@@ -108,7 +110,7 @@ class Convert extends Command {
           },
         }
       );
-      msg.send(
+      m.edit(
         `Succefully converted ${amt} dabs <:dabs:851218687255773194> to ${
           currency.currencyEmoji
         } you will get ${toFancyNum(estimated)} ${currency.currencyEmoji} ${
@@ -135,14 +137,14 @@ class Convert extends Command {
           },
         }
       );
-      msg.send(
+      m.edit(
         `Succefully converted ${amt} dabs <:dabs:851218687255773194> to ${
           currency.currencyEmoji
         } you will get ${toFancyNum(estimated)} ${currency.currencyEmoji} ${
           currency.currencyName
         }`
       );
-    }
+    }})
   }
 }
 

@@ -1,7 +1,7 @@
 const Command = require("../../structures/Command.js");
 const serverValue = require("../../structures/servervalue.js");
 const { toFancyNum } = require("../../utils/constants.js");
-const { getCurrency } = require("../../structures/database.js");
+
 class ServerValue extends Command {
   constructor(...args) {
     super(...args, {
@@ -26,10 +26,13 @@ class ServerValue extends Command {
     let db = this.client.dbClient;
     db = await db.db();
     let percentage = pct.length <= 1 ? parseInt(pct[0]) : parseInt(pct[1]);
+    msg.send(`Calculating.......`).then(m => {
+      
+    
     let serverVal = await serverValue(msg.guild, msg);
-    let dabs = await getCurrency(msg.guild.id,  db);
+  
     pct.length == 1
-      ? msg.send(
+      ? m.edit(
           "Server total value is: `" +
             serverVal +
             "`\n**" +
@@ -40,14 +43,14 @@ class ServerValue extends Command {
             toFancyNum(parseInt(((serverVal * pct) / 100) * 1500000)) +
             `** dabs!`
         )
-      : msg.send(
+      : m.edit(
           "Server total value is: `" +
             serverVal +
             "`\n" +
             "Which is approximately equal to <:dabs:851218687255773194>  **| " +
             toFancyNum(serverVal * 1500000) +
             `** dabs!`
-        );
+        );})
   }
 }
 

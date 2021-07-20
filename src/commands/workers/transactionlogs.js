@@ -33,15 +33,15 @@ class TransactionLogs extends Command {
             } else {
                 l = await logs.find({ by: `${user.id}` }).sort({ at: -1 }).toArray();
             }
-            console.log(l)
+         
 
             let str = `Transactions logs of ${user.username} if your logs are too much it wont show in this case input specific date\n`
             try {
                 l.forEach(async (lo, index) => {
-
+        
                 let u = await this.client.users.fetch(lo.to)
                     str += `**${user.username}** | **${toFancyNum(lo.amount)}** <:dabs:851218687255773194> to **${u.username}** at ${new Date(lo.at).toDateString()}\n`
-                    if (index == l.length - 1) {
+                    if (index == 10) {
                     return msg.send('Logs').then(async (m) => { await msg.channel.send(str); m.react('👍') })
                 }
             });
@@ -58,10 +58,10 @@ class TransactionLogs extends Command {
                 let db = this.client.dbClient;
                 db = await db.db();
                 let logs = db.collection('transations')
-                let l = await logs.find({ by: `${user.id}` }).sort({ at: -1 }).limit(12).toArray();
+                let l = await logs.find({ by: `${user.id}` }).sort({ at: -1 }).limit(7).toArray();
                 let str = `Transactions logs of ${user.username}\n`
                 l.forEach(async (lo, index) => {
-                    if (index > 10) {
+                    if (index > 5) {
                         return msg.send('Check DM for logs').then(async (m) => { await author.send(str); m.react('👍') })
                     }
                     let u = await this.client.users.fetch(lo.to)
