@@ -26,7 +26,7 @@ class ServerValue extends Command {
     let db = this.client.dbClient;
     db = await db.db();
     let percentage = pct.length <= 1 ? parseInt(pct[0]) : parseInt(pct[1]);
-    msg.send(`Calculating.......`).then(m => {
+    msg.send(`Calculating.......`).then(async (m )=> {
       
     
     let serverVal = await serverValue(msg.guild, msg);

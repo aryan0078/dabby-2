@@ -60,7 +60,7 @@ class Convert extends Command {
     }
 
     let user = db.collection("members");
-    msg.send('**Please Wait Swapping your currency...\nNote dont do any thing during this process otherwise u will loose your dabs').then(m => {
+    msg.send('**Please Wait Swapping your currency...\nNote dont do any thing during this process otherwise u will loose your dabs').then(async(m )=> {
   
 
     let serverVal = await serverValue(msg.guild, msg);
