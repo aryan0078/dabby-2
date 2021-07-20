@@ -41,7 +41,7 @@ class TransactionLogs extends Command {
         
                 let u = await this.client.users.fetch(lo.to)
                     str += `**${user.username}** | **${toFancyNum(lo.amount)}** <:dabs:851218687255773194> to **${u.username}** at ${new Date(lo.at).toDateString()}\n`
-                    if (index == 10) {
+                    if (index == 9) {
                     return msg.send('Logs').then(async (m) => { await msg.channel.send(str); m.react('👍') })
                 }
             });
