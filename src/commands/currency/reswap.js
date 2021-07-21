@@ -13,7 +13,7 @@ class Reswap extends Command {
       description: "Reswap you currency to dabs",
       usage: "reswap amount ",
       guildOnly: true,
-      cooldown: 5,
+    cooldown: 15,
       aliases: ["reswap", "rs", "reswap"],
     });
   }

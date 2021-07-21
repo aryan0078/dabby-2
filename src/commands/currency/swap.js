@@ -14,7 +14,7 @@ class Convert extends Command {
       description: "Convert ",
       usage: "convert amount to diffrent currency",
       guildOnly: true,
-      cooldown: 6,
+      cooldown: 15,
       aliases: ["conv", "convert", "swap", "sw"],
     });
   }
