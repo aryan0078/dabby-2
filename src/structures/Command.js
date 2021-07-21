@@ -11,7 +11,7 @@ class Command extends Base {
     this.extendedHelp = options.extendedHelp || "No extended help provided.";
     this.ownerOnly = options.ownerOnly || false;
     this.aliases = options.aliases || [];
-    this.cooldown = options.cooldown || 0;
+    this.cooldown = options.cooldown ||10;
     this.cost = options.cost || 0;
     this.nsfw = options.nsfw || false;
     // File path is like general/ping.js we split by / and take general title-cased if not provided.
