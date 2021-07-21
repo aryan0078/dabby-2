@@ -54,7 +54,7 @@ class Reswap extends Command {
     }
 
     let user = db.collection("members");
-    msg.send('**Please Wait Swapping your currency...\nNote dont do any thing during this process otherwise u will loose your dabs').then(async(m )=> {
+    msg.send('**Please Wait Swapping your currency...\nNote dont do any thing during this process otherwise u will loose your dabs**').then(async(m )=> {
       let serverVal = await serverValue(msg.guild, msg);
       let estimated = Math.round((amt * serverVal) / 100);
       let currencyExsis = await getBalanceExists(msg.author.id, msg.guild.id, db);
