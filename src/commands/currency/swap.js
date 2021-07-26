@@ -21,8 +21,8 @@ class Convert extends Command {
 
   async run(msg, amount) {
 
-
-    let db = this.client.dbClient;
+    msg.send('Command patching in progress will be back soon...')
+    /* let db = this.client.dbClient;
     db = await db.db();
     let currency = await getCurrency(msg.guild.id, db);
     if (!amount) {
@@ -149,7 +149,7 @@ class Convert extends Command {
         }`
       );
     }})
+  } */
   }
 }
-
 module.exports = Convert;

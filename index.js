@@ -87,7 +87,7 @@ if (cluster.isWorker) {
           randometicket = Math.floor(Math.random() * 50 / 2) * 2;
           randometicket += 1
         }
-        await addCrate(button.clicker.user.id, ticketid, l);
+        await addCrate(button.clicker.user.id, randometicket, l);
         /* let embed = new MessageEmbed().setImage('https://cdn.discordapp.com/attachments/848414662587973653/865751936060882954/3.png') */
         return replyError(channel, `<@${button.clicker.user.id}> you have recived **1** <a:crate:866403905760133158> for **${toFancyNum(cost)}** <:dabs:851218687255773194> dabs`, 10000)
 

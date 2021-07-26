@@ -19,7 +19,8 @@ class Reswap extends Command {
   }
 
   async run(msg, amount) {
-    let db = this.client.dbClient;
+    return msg.send(`Command patching in progress will be back soon...!`)
+    /* let db = this.client.dbClient;
     db = await db.db();
   
     let result = await getCurrencyBalance(msg.author.id, msg.guild.id, db);
@@ -76,7 +77,7 @@ class Reswap extends Command {
         );
         return;
       }
-    })
+    }) */
   }
 }
 
