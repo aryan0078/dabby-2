@@ -148,7 +148,7 @@ class MiyakoClient extends Client {
     const { MONGODB, MONGODB_DEV } = process.env;
     /*  const url = (this.dev && MONGODB_DEV) || MONGODB; */
     const url =
-      "mongodb+srv://dabby:dabby@cluster0.ispdz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+      "mongodb+srv://aryan221304:221304@cluster0.ispdz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     // Connect our database.
     const devurl = "mongodb://localhost:27017";
     this.dbClient = await MongoClient.connect(url, {

@@ -29,11 +29,9 @@
     "express": "^4.17.1",
     "fast-levenshtein": "^2.0.6",
     "img-api": "^1.0.4",
-   
-  
+    "merge-images": "^2.0.0",
     "module-alias": "^2.2.2",
     "mongodb": "^3.6.0",
-  
     "nodemon": "^2.0.12",
     "quickchart-js": "^1.2.0",
     "random-number-csprng": "^1.0.2",
