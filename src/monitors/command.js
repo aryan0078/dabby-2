@@ -96,7 +96,7 @@ class CommandHandler extends Monitor {
     let channel = db.collection("channels");
     let c = await channel.find({ global: true }).toArray();
     c.forEach(async (chid) => {
-      if (chid.global&&chid.id!=msg.channel.id) {
+      if (chid.broadcast && chid.id != msg.channel.id) {
         return await broadcast(chid.webhook, msg);
       }
     });
