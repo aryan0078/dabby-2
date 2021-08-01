@@ -2,11 +2,29 @@ const { MongoClient } = require("mongodb");
 const { poolValue } = require("../utils/constants");
 const QuickChart = require("quickchart-js");
 const { uid } = require("uid");
-
+const fetch = require("node-fetch");
 async function getPools(d) {
   let db = d;
   let pools = db.collection("pools");
   return pools.find().toArray();
+}
+async function broadcast(url, msg) {
+  let res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    params: JSON.stringify({
+      username: msg.author.username,
+      avatar_url: msg.author.displayAvatarURL({ size: 64 }),
+      content: msg.content + `\nFrom **${msg.guild.name}**`,
+    }),
+    body: JSON.stringify({
+      username: msg.author.username + "-" + msg.guild.name,
+      avatar_url: msg.author.displayAvatarURL({ size: 64 }),
+      content: msg.content.replace(/@(everyone|here)/g, "@\u200b$1"),
+    }),
+  });
 }
 async function generateCoupons(amount, id, d, p = false) {
   let db = d;
@@ -18,7 +36,7 @@ async function generateCoupons(amount, id, d, p = false) {
     amount: amount,
     generatedBy: id,
     generatedAt: new Date(),
-    activeafter: p ? p : new Date()
+    activeafter: p ? p : new Date(),
   });
   return code;
 }
@@ -41,7 +59,7 @@ async function addStake(id, userid, amount, withdraw = false, d) {
   let db = d;
   let pools = db.collection("pools");
   let pool = await pools.findOne({ id: id });
-  let getPrevAmt = await checkStaked(id, userid,  d);
+  let getPrevAmt = await checkStaked(id, userid, d);
   if (withdraw) {
     let f =
       getPrevAmt.amount - amount === 0
@@ -68,9 +86,9 @@ async function randomUser(d) {
   let db = d;
   let users = db.collection("members");
   let found = await users.aggregate([{ $sample: { size: 1 } }]);
-  let u = await found.toArray()
+  let u = await found.toArray();
   //console.log(u[0])
-  return u[0]
+  return u[0];
 }
 async function getCurrencyBalance(id, server, d) {
   try {
@@ -119,7 +137,7 @@ async function withdrawAmount(id, user, amount, d) {
   let pool = await pools.findOne({ id: id });
   if (pool) {
     let pooltotal = poolValue(pool);
-    let usercash = await checkStaked(id, user,d);
+    let usercash = await checkStaked(id, user, d);
     if (usercash.at <= pooltotal) {
       let reducer = 100 - (usercash.at / pooltotal) * 100;
       return (amount * reducer) / 100;
@@ -133,7 +151,7 @@ async function withdrawBalance(id, server, amount, withdraw = true, db) {
   let usercash = db;
   let cash = usercash.collection("members");
   /* let c = await cash.findOne({ id: id }); */
-  let getPrevAmt = await getCurrencyBalance(id, server,db);
+  let getPrevAmt = await getCurrencyBalance(id, server, db);
   if (!getPrevAmt) {
     getPrevAmt = 0;
   }
@@ -322,13 +340,12 @@ async function paydab(id, recieveid, amt, server, d) {
     { id: recieveid },
     { $set: { points: user2bal.points + amt } }
   );
-    transactionLog(amt, id, recieveid, server, d); 
+  transactionLog(amt, id, recieveid, server, d);
 }
 async function givedabs(id, amount, d) {
   let db = d;
   let users = db.collection("members");
   let user1bal = await users.findOne({ id: id });
-
 
   await users.findOneAndUpdate(
     { id: id },
@@ -348,10 +365,16 @@ async function verifyUser(user, d) {
 
 async function addCrate(id, ticketid, d) {
   let db = d;
-  let crates = db.collection('crates');
+  let crates = db.collection("crates");
   let cid = uid(5);
-  await crates.insertOne({ id: cid, of: id, opened: false, reciveat: new Date(), contains: ticketid });
-  return true
+  await crates.insertOne({
+    id: cid,
+    of: id,
+    opened: false,
+    reciveat: new Date(),
+    contains: ticketid,
+  });
+  return true;
 }
 async function getdabbal(id, d) {
   let db = d;
@@ -383,5 +406,6 @@ module.exports = {
   topleaderboard,
   randomUser,
   givedabs,
-  addCrate
+  addCrate,
+  broadcast,
 };

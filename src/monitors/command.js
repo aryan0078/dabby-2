@@ -1,6 +1,10 @@
 const Monitor = require("../structures/Monitor.js");
 const { Collection, Permissions } = require("discord.js");
-const { checkChannelEandD, verifyUser } = require("../structures/database.js");
+const {
+  checkChannelEandD,
+  verifyUser,
+  broadcast,
+} = require("../structures/database.js");
 const { replyError } = require("../utils/constants.js");
 /* const { MessageButton, MessageActionRow } = require("discord-buttons"); */
 
@@ -82,19 +86,24 @@ class CommandHandler extends Monitor {
     if (!f) {
       return msg.send('You are New user type `dab signup`')
     } */
-
+    let db = this.client.dbClient;
+    db = await db.db();
     if (msg.webhookID || msg.author.bot) return; // Ignore bots and webhooks.
-
 
     // Ensure the bot itself is in the member cache.
     if (msg.guild && !msg.guild.me)
       await msg.guild.members.fetch(this.client.user);
-
+    let channel = db.collection("channels");
+    let c = await channel.find({ global: true }).toArray();
+    c.forEach(async (chid) => {
+      if (chid.global&&chid.id!=msg.channel.id) {
+        return await broadcast(chid.webhook, msg);
+      }
+    });
     // Grab the current prefix.
     const prefix = msg.guild
       ? msg.guild.settings.prefix
       : this.prefix[this.prefix.indexOf(msg.split(" ")[0])];
-
 
     // If we don't have permissions to send messages don't run the command.
     if (!msg.channel.postable) return;
@@ -112,21 +121,21 @@ class CommandHandler extends Monitor {
     const userPrefix =
       msg.author.settings.prefix && msg.author.settings.prefix.length
         ? `|${msg.author.settings.prefix
-          .map((p) => `^${this.client.utils.escapeRegex(p)}`)
-          .join("|")}`
+            .map((p) => `^${this.client.utils.escapeRegex(p)}`)
+            .join("|")}`
         : "";
 
     const prefixMatch = new RegExp(
-      `^(?:(?:(?:dab|d|da),? )?dabby,? )|^<@!?${this.client.user.id
+      `^(?:(?:(?:dab|d|da),? )?dabby,? )|^<@!?${
+        this.client.user.id
       }> |^${this.client.utils.escapeRegex(prefix)}${userPrefix}`,
       "i"
     ).exec(msg.content);
 
     // If the message is not a command do nothing.
     if (!prefixMatch) return;
-    this.checkDisabled
-    let db = this.client.dbClient;
-    db = await db.db();
+    this.checkDisabled;
+
     let enabled = await checkChannelEandD(msg.channel.id, db);
     let m = msg.content.toLowerCase();
     if (m === "dab enable") {
@@ -134,13 +143,13 @@ class CommandHandler extends Monitor {
     } else {
       if (m.startsWith("dab") || prefixMatch) {
         if (!enabled) {
-          return
+          return;
         }
       }
     }
     /*  const logschannel = this.client.channels.cache.get("865681231046901782")
      await logschannel.send(`By **${msg.author.username}** command: **${msg.content}** at \n**${new Date()}**\nin **${msg.guild.name}**`) */
-  /*   let u = await verifyUser(msg.author.id, db);
+    /*   let u = await verifyUser(msg.author.id, db);
     if (!u && msg.content != "dab help") {
       let users_ = await db.collection("members").countDocuments();
       const guild = this.client.guilds.cache.get("843887160696635403"); //Dabby support server ID
@@ -220,8 +229,6 @@ class CommandHandler extends Monitor {
       );
     }
 
-
-
     // Verify the member is available and its settings are synchronized.
     if (msg.guild) {
       if (!msg.member) await msg.guild.members.fetch(msg.author);
@@ -233,7 +240,6 @@ class CommandHandler extends Monitor {
 
     // Check for permissions.
     if (!(await this.checkPerms(msg, command))) return;
-
 
     // Initialize message for command execution.
     msg.args = args;
@@ -270,9 +276,7 @@ class CommandHandler extends Monitor {
     const difference = Date.now() - ratelimits[cmd.name];
 
     if (difference < cooldown) {
-
-
-      return
+      return;
     } else {
       ratelimits[cmd.name] = Date.now(); // set the key to now, to mark the start of the cooldown
       this.ratelimits.set(msg.author.id, ratelimits); // set it
