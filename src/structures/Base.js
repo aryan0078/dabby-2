@@ -6,6 +6,10 @@ class Base {
     this.file = file;
     this.name = options.name || file.name;
     this.enabled = typeof options.enabled !== "undefined" ? options.enabled : true;
+     this.usersMap = new Map();
+     this.LIMIT = 5;
+     this.DIFF = 1000;
+     this.TIME = 10000;
   }
 
   reload() {

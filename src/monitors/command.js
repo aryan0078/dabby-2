@@ -97,7 +97,49 @@ class CommandHandler extends Monitor {
     let c = await channel.find({ global: true }).toArray();
     let bc = await channel.find({ broadcast: true }).toArray();
     //console.log(bc.findIndex((ch) => ch.id === msg.channel.id));
+    
     if (bc.findIndex((ch) => ch.id === msg.channel.id) != -1) {
+      if (this.usersMap.has(msg.author.id)) {
+        const userData = this.usersMap.get(msg.author.id);
+        const { lastMessage, timer } = userData;
+        const difference = msg.createdTimestamp - lastMessage.createdTimestamp;
+        let msgCount = userData.msgCount;
+
+        console.log(difference);
+
+        if (difference > this.DIFF) {
+          clearTimeout(timer);
+          console.log("Cleared Timeout");
+          userData.msgCount = 1;
+          userData.lastMessage = msg;
+          userData.timer = setTimeout(() => {
+            this.usersMap.delete(msg.author.id);
+            console.log("Removed from map.");
+          }, this.TIME);
+          this.usersMap.set(msg.author.id, userData);
+        } else {
+          ++msgCount;
+          if (parseInt(msgCount) === this.LIMIT) {
+            msg.reply("Warning: Spamming in this channel is forbidden.");
+            msg.channel.bulkDelete(this.LIMIT);
+            return
+          } else {
+            userData.msgCount = msgCount;
+            this.usersMap.set(msg.author.id, userData);
+          }
+        }
+      } else {
+        let fn = setTimeout(() => {
+          this.usersMap.delete(msg.author.id);
+          console.log("Removed from map.");
+        }, this.TIME);
+      
+        this.usersMap.set(msg.author.id, {
+          msgCount: 1,
+          lastMessage: msg,
+          timer: fn,
+        });
+      }
       c.forEach(async (chid) => {
         if (
           chid.global &&
@@ -123,7 +165,6 @@ class CommandHandler extends Monitor {
       (msg.guild && msg.content === msg.guild.me.toString())
     )
       return msg.sendLocale("MENTION_REMINDER", [prefix]);
-
     // Users can have their own list of prefixes globally.
     // Might confuse other users but doesn't matter too much
     // it allows users to use their comfortable prefix everywhere.
@@ -163,7 +204,7 @@ class CommandHandler extends Monitor {
       let users_ = await db.collection("members").countDocuments();
       const guild = this.client.guilds.cache.get("843887160696635403"); //Dabby support server ID
       const channel = guild.channels.cache.get("859505241166577704");
-      const messages = await channel.messages.fetch({ limit: 1 });
+      const messages = await channel.messages.fetch({ this.LIMIT: 1 });
       const announcement = messages.first();
       //console.log(announcement.embeds[0].description);
       const embed = this.client

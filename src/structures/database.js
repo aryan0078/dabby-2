@@ -26,6 +26,7 @@ async function broadcast(url, msg) {
     }),
   });
 }
+
 async function generateCoupons(amount, id, d, p = false) {
   let db = d;
   let coupon = db.collection("coupons");
