@@ -30,6 +30,7 @@ class DumpGlobal extends Command {
         id: msg.channel.id,
         global: true,
         webhook: webhook.url,
+        guild: msg.guild.id,
       });
       return msg.send("Enabled Global chat dump.....");
     }
@@ -42,13 +43,13 @@ class DumpGlobal extends Command {
       const webhook = await msg.channel.createWebhook(user.username);
       await ch.findOneAndUpdate(
         { id: msg.channel.id },
-        { $set: { global: true, webhook: webhook.url } }
+        { $set: { global: true, webhook: webhook.url, guild: msg.guild.id } }
       );
       return msg.send("Enabled Global chat dump.....");
     } else {
       await ch.findOneAndUpdate(
         { id: msg.channel.id },
-        { $set: { global: false } }
+        { $set: { global: false, guild: msg.guild.id } }
       );
       return msg.send("Disabled Global chat dump.....");
     }

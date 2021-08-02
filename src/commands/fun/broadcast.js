@@ -30,6 +30,7 @@ class Broadcast extends Command {
         id: msg.channel.id,
         broadcast: true,
         webhook: webhook.url,
+        guild: msg.guild.id,
       });
       return msg.send(
         "Messages from this channel will be broadcasted globally"
@@ -44,7 +45,7 @@ class Broadcast extends Command {
       const avatar = user.displayAvatarURL({ format: "png", size: 2048 });
       await ch.findOneAndUpdate(
         { id: msg.channel.id },
-        { $set: { broadcast: true, webhook: webhook.url } }
+        { $set: { broadcast: true, webhook: webhook.url, guild: msg.guild.id } }
       );
       return msg.send(
         "Messages from this channel will be broadcasted globally"
@@ -52,7 +53,7 @@ class Broadcast extends Command {
     } else {
       await ch.findOneAndUpdate(
         { id: msg.channel.id },
-        { $set: { broadcast: false } }
+        { $set: { broadcast: false, guild: msg.guild.id } }
       );
       return msg.send("Broadcast disabled");
     }

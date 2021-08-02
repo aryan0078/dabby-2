@@ -99,7 +99,11 @@ class CommandHandler extends Monitor {
     //console.log(bc.findIndex((ch) => ch.id === msg.channel.id));
     if (bc.findIndex((ch) => ch.id === msg.channel.id) != -1) {
       c.forEach(async (chid) => {
-        if (chid.global && chid.id != msg.channel.id) {
+        if (
+          chid.global &&
+          chid.id != msg.channel.id &&
+          chid.guild != msg.guild.id
+        ) {
           return await broadcast(chid.webhook, msg);
         }
       });
