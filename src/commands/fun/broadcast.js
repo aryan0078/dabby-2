@@ -35,7 +35,7 @@ class Broadcast extends Command {
         "Messages from this channel will be broadcasted globally"
       );
     }
-    if (!check.global) {
+    if (!check.broadcast) {
       let user = await this.verifyUser(msg, msg.author);
       user.send(
         `Please whitelist bot from other bots because this feature use following features\n1.Webhooks\n2.Embedlinks(server invite link will be removed)`

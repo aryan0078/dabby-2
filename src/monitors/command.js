@@ -95,11 +95,16 @@ class CommandHandler extends Monitor {
       await msg.guild.members.fetch(this.client.user);
     let channel = db.collection("channels");
     let c = await channel.find({ global: true }).toArray();
-    c.forEach(async (chid) => {
-      if (chid.broadcast && chid.id != msg.channel.id) {
-        return await broadcast(chid.webhook, msg);
-      }
-    });
+    let bc = await channel.find({ broadcast: true }).toArray();
+    //console.log(bc.findIndex((ch) => ch.id === msg.channel.id));
+    if (bc.findIndex((ch) => ch.id === msg.channel.id) != -1) {
+      c.forEach(async (chid) => {
+        if (chid.global && chid.id != msg.channel.id) {
+          return await broadcast(chid.webhook, msg);
+        }
+      });
+    }
+ 
     // Grab the current prefix.
     const prefix = msg.guild
       ? msg.guild.settings.prefix
