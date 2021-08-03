@@ -105,24 +105,30 @@ class CommandHandler extends Monitor {
         const difference = msg.createdTimestamp - lastMessage.createdTimestamp;
         let msgCount = userData.msgCount;
 
-        console.log(difference);
-
         if (difference > this.DIFF) {
           clearTimeout(timer);
-          console.log("Cleared Timeout");
+
           userData.msgCount = 1;
           userData.lastMessage = msg;
           userData.timer = setTimeout(() => {
             this.usersMap.delete(msg.author.id);
-            console.log("Removed from map.");
           }, this.TIME);
+          c.forEach(async (chid) => {
+            if (
+              chid.global &&
+              chid.id != msg.channel.id &&
+              chid.guild != msg.guild.id
+            ) {
+              return await broadcast(chid.webhook, msg);
+            }
+          });
           this.usersMap.set(msg.author.id, userData);
         } else {
           ++msgCount;
           if (parseInt(msgCount) === this.LIMIT) {
             msg.reply("Warning: Spamming in this channel is forbidden.");
             msg.channel.bulkDelete(this.LIMIT);
-            return
+            return;
           } else {
             userData.msgCount = msgCount;
             this.usersMap.set(msg.author.id, userData);
@@ -131,24 +137,15 @@ class CommandHandler extends Monitor {
       } else {
         let fn = setTimeout(() => {
           this.usersMap.delete(msg.author.id);
-          console.log("Removed from map.");
         }, this.TIME);
-      
+
         this.usersMap.set(msg.author.id, {
           msgCount: 1,
           lastMessage: msg,
           timer: fn,
         });
       }
-      c.forEach(async (chid) => {
-        if (
-          chid.global &&
-          chid.id != msg.channel.id &&
-          chid.guild != msg.guild.id
-        ) {
-          return await broadcast(chid.webhook, msg);
-        }
-      });
+    
     }
  
     // Grab the current prefix.
