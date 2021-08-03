@@ -7,8 +7,8 @@ class Base {
     this.name = options.name || file.name;
     this.enabled = typeof options.enabled !== "undefined" ? options.enabled : true;
      this.usersMap = new Map();
-     this.LIMIT = 5;
-     this.DIFF = 1000;
+     this.LIMIT = 3;
+     this.DIFF = 2000;
      this.TIME = 10000;
   }
 
